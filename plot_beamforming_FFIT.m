@@ -1,0 +1,60 @@
+clear;
+q1=pi*2/3;q2=pi*1/3;q3=pi*3/2;q4=pi*5.8/6;
+ E=1;
+ lam=1;
+ r=1;
+ m1=1;m2=1;m3=1;m4=1;m5=1;m6=1;m7=1;m8=1;
+ a=0:7;
+ for n=1:length(a)
+A1(n)=[exp(-j*pi*cos(q1-(pi*a(n)/4))/lam)];
+A2(n)=[exp(-j*pi*cos(q2-(pi*a(n)/4))/lam)];
+A3(n)=[exp(-j*pi*cos(q3-(pi*a(n)/4))/lam)];
+A4(n)=[exp(-j*pi*cos(q4-(pi*a(n)/4))/lam)];
+end
+A=[A1',A2',A3',A4'];
+n=1:1900;
+v1=.06;
+v2=.02;
+v3=.03;
+v4=.073;
+D=[1*cos(v1*n);1*sin(v2*n);1*sin(v3*n);1*square(v4*n)];
+U=A*D;
+U1=(U)';
+c=cov(U*U1);
+[s,z]=eig(c);
+Vn=s(:,[1:4]);
+ci=inv(c);
+bb=[1 0 0 0 ]';
+Wopte=A'\bb;
+q1b=[2*pi:-2*pi/180:2*pi/180];
+b=0:7;
+for t=1:length(q1b)
+h(t)=q1b(t);
+ for m=1:length(b)
+Aa(m)=[exp(-j*pi*cos(h(t)-(pi*a(m)/4))/lam)];
+end
+Ala=Aa';
+Pmusic(t)=(Ala)'*Ala*(inv((Ala)'*Vn*(Vn)'*Ala));
+Pcap(t)=inv((Ala)'*ci*(Ala));
+T(t)=q1b(t);
+P1=abs(Pcap);
+P2=abs(Pmusic);
+Ye(t)=Wopte'*Ala;
+p=abs(Ye);
+end
+figure(1);
+polar(T,P1);
+figure(2);
+T1=T*180/pi;
+semilogy(T1,P1);grid
+figure(3);
+polar(T,P2);
+figure(4);
+T1=T*180/pi;
+semilogy(T1,P2);grid
+figure(5);
+polar(T,p);
+figure(6);
+T1=T*180/pi;
+semilogy(T1,p);grid
+
